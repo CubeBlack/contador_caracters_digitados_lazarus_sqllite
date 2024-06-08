@@ -7,7 +7,7 @@ object formPrincipal: TformPrincipal
   ClientHeight = 240
   ClientWidth = 701
   OnShow = FormShow
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.4.0.0'
   object mmValores: TMemo
     Left = 19
     Height = 128
@@ -66,8 +66,8 @@ object formPrincipal: TformPrincipal
     Top = 19
     Width = 115
     Caption = 'btnSalvarLote'
-    OnClick = btnSalvarLoteClick
     TabOrder = 2
+    OnClick = btnSalvarLoteClick
   end
   object TimerKey: TTimer
     Interval = 16
@@ -92,8 +92,9 @@ object formPrincipal: TformPrincipal
     Properties.Strings = (
       'AutoEncodeStrings=True'
       'controls_cp=CP_UTF8'
+      'RawStringEncoding=DB_CP'
     )
-    Connected = True
+    DisableSavepoints = False
     Port = 0
     Database = 'data.sqllite'
     Protocol = 'sqlite-3'
@@ -125,27 +126,19 @@ object formPrincipal: TformPrincipal
     )
     Params = <    
       item
-        DataType = ftUnknown
         Name = 'datahora_envio'
-        ParamType = ptUnknown
       end    
       item
-        DataType = ftUnknown
         Name = 'quantidade_digitada'
-        ParamType = ptUnknown
       end>
     Left = 351
     Top = 14
     ParamData = <    
       item
-        DataType = ftUnknown
         Name = 'datahora_envio'
-        ParamType = ptUnknown
       end    
       item
-        DataType = ftUnknown
         Name = 'quantidade_digitada'
-        ParamType = ptUnknown
       end>
   end
 end

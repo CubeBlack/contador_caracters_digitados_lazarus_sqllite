@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, DB, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  DBGrids, ZConnection, ZDataset;
+  DBGrids, ZConnection, ZDataset, uConfig;
 
 type
 
@@ -168,7 +168,7 @@ end;
 
 procedure TformPrincipal.FormShow(Sender: TObject);
 begin
-
+  setting_load();
 end;
 
 procedure TFormPrincipal.Coloca(valor:string);

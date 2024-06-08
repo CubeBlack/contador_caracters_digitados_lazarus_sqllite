@@ -47,6 +47,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="uconfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uConfig"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
