@@ -42,7 +42,7 @@ begin
   setting_database.host    := Sett.ReadString(CONFIG_FILE_DATABASE, 'host', 'localhost');
   setting_database.port    := Sett.ReadInteger(CONFIG_FILE_DATABASE, 'port', 5432);
   setting_database.user    := Sett.ReadString(CONFIG_FILE_DATABASE, 'user', 'root');
-  setting_database.pasword := Sett.ReadString(CONFIG_FILE_DATABASE, 'user', 'pasword');
+  setting_database.pasword := Sett.ReadString(CONFIG_FILE_DATABASE, 'pasword', '1');
   Sett.Free;
 
 end;

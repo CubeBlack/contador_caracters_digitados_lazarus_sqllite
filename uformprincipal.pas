@@ -18,7 +18,7 @@ type
     DBText2: TDBText;
     DBText3: TDBText;
     dsInteraction: TDataSource;
-    TimerSalvarLote: TTimer;
+    tmInteractionSave: TTimer;
     TimerKey: TTimer;
     ZConnection: TZConnection;
     zqInteraction: TZQuery;
@@ -30,7 +30,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure TimerDisplayTimer(Sender: TObject);
     procedure TimerKeyTimer(Sender: TObject);
-    procedure TimerSalvarLoteTimer(Sender: TObject);
+    procedure tmInteractionSaveTimer(Sender: TObject);
   private
 
   public
@@ -38,6 +38,8 @@ type
     procedure Coloca(valor:string);
     procedure acumular_um_digito();
     procedure interaction_save();
+    procedure database_connect();
+    procedure querys_open();
   end;
 
 var
@@ -141,11 +143,17 @@ end;
 
 procedure TformPrincipal.interaction_save();
 begin
+  if zqInteractionvalue.asInteger = 0 then
+  begin
+    exit;
+  end;
+
   zqInteraction.ApplyUpdates;
   zqInteraction.refresh;
+  zqInteraction.insert;
 end;
 
-procedure TformPrincipal.TimerSalvarLoteTimer(Sender: TObject);
+procedure TformPrincipal.tmInteractionSaveTimer(Sender: TObject);
 begin
   interaction_save();
 end;
@@ -167,19 +175,49 @@ end;
 
 procedure TformPrincipal.FormShow(Sender: TObject);
 begin
-  setting_load();
-  //database_connect();
+  try
+    setting_load();
+    database_connect();
+    querys_open();
+  except
+    on e:Exception do
+    begin
+       showMessage(e.Message);
+       close();
+    end;
+
+  end;
+
+  tmInteractionSave.Enabled:=true;
 end;
 
 procedure TFormPrincipal.Coloca(valor:string);
 begin
-
  acumular_um_digito();
 end;
 
 procedure TFormPrincipal.acumular_um_digito();
 begin
  zqInteractionvalue.asInteger := zqInteractionvalue.asInteger + 1;
+end;
+
+procedure TFormPrincipal.database_connect();
+begin
+ //TUDO - criar validação caso ja esteja conectado ao abrir
+ ZConnection.Connected := false;
+
+ ZConnection.HostName := setting_database.host;
+ ZConnection.Port := setting_database.port;
+ ZConnection.User := setting_database.user;
+ ZConnection.Password := setting_database.pasword;
+
+ ZConnection.Connect;
+end;
+
+procedure TFormPrincipal.querys_open();
+begin
+ zqInteraction.open;
+ zqInteraction.insert;
 end;
 
 end.

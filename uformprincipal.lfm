@@ -48,10 +48,10 @@ object formPrincipal: TformPrincipal
     Left = 24
     Top = 16
   end
-  object TimerSalvarLote: TTimer
+  object tmInteractionSave: TTimer
     Enabled = False
     Interval = 60000
-    OnTimer = TimerSalvarLoteTimer
+    OnTimer = tmInteractionSaveTimer
     Left = 96
     Top = 24
   end
