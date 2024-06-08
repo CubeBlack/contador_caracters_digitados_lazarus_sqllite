@@ -6,68 +6,41 @@ object formPrincipal: TformPrincipal
   Caption = 'formPrincipal'
   ClientHeight = 240
   ClientWidth = 701
+  OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '3.4.0.0'
-  object mmValores: TMemo
-    Left = 19
-    Height = 128
-    Top = 77
-    Width = 263
-    Lines.Strings = (
-      'mmValores'
-    )
-    TabOrder = 0
-  end
-  object Label1: TLabel
-    Left = 136
-    Height = 15
-    Top = 44
-    Width = 31
-    Caption = 'Ativo:'
-    ParentColor = False
-  end
-  object Label2: TLabel
-    Left = 141
-    Height = 15
-    Top = 24
-    Width = 26
-    Caption = 'Lote:'
-    ParentColor = False
-  end
-  object lblDigitosAcumuladoAtivo: TLabel
-    Left = 185
-    Height = 15
-    Top = 29
-    Width = 140
-    Caption = 'lblDigitosAcumuladoAtivo'
-    ParentColor = False
-  end
-  object lblDigitosAcumuladoLote: TLabel
-    Left = 183
-    Height = 15
-    Top = 52
-    Width = 135
-    Caption = 'lblDigitosAcumuladoLote'
-    ParentColor = False
-  end
-  object DBGrid1: TDBGrid
-    Left = 400
-    Height = 100
-    Top = 120
-    Width = 200
-    Color = clWindow
-    Columns = <>
-    DataSource = dsPacote
-    TabOrder = 1
-  end
-  object btnSalvarLote: TButton
-    Left = 520
+  object btnInteractionSave: TButton
+    Left = 320
     Height = 25
-    Top = 19
+    Top = 88
     Width = 115
-    Caption = 'btnSalvarLote'
-    TabOrder = 2
-    OnClick = btnSalvarLoteClick
+    Caption = 'btnInteractionSave'
+    TabOrder = 0
+    OnClick = btnInteractionSaveClick
+  end
+  object DBText1: TDBText
+    Left = 328
+    Height = 15
+    Top = 8
+    Width = 41
+    DataField = 'id'
+    DataSource = dsInteraction
+  end
+  object DBText2: TDBText
+    Left = 376
+    Height = 15
+    Top = 7
+    Width = 41
+    DataField = 'datetime_registration'
+    DataSource = dsInteraction
+  end
+  object DBText3: TDBText
+    Left = 508
+    Height = 15
+    Top = 7
+    Width = 41
+    DataField = 'value'
+    DataSource = dsInteraction
   end
   object TimerKey: TTimer
     Interval = 16
@@ -82,11 +55,6 @@ object formPrincipal: TformPrincipal
     Left = 96
     Top = 24
   end
-  object TimerDisplay: TTimer
-    OnTimer = TimerDisplayTimer
-    Left = 176
-    Top = 24
-  end
   object ZConnection: TZConnection
     ControlsCodePage = cCP_UTF8
     Properties.Strings = (
@@ -94,51 +62,65 @@ object formPrincipal: TformPrincipal
       'controls_cp=CP_UTF8'
       'RawStringEncoding=DB_CP'
     )
+    Connected = True
+    AddLogMsgToExceptionOrWarningMsg = False
     DisableSavepoints = False
-    Port = 0
-    Database = 'data.sqllite'
-    Protocol = 'sqlite-3'
+    HostName = 'localhost'
+    Port = 5432
+    Database = 'caderno'
+    User = 'postgres'
+    Password = '1'
+    Protocol = 'postgresql'
     Left = 56
     Top = 88
   end
-  object dsPacote: TDataSource
-    DataSet = zqPacote
-    Left = 351
-    Top = 72
-  end
-  object zqPacote: TZQuery
+  object zqInteraction: TZQuery
     Connection = ZConnection
     SQL.Strings = (
-      'select * from pacote;'
-    )
-    Params = <>
-    Left = 438
-    Top = 41
-  end
-  object zqPacoteSalvar: TZQuery
-    Connection = ZConnection
-    SQL.Strings = (
-      'INSERT INTO '
-      'pacote pacote (codigo, datahora_envio, quantidade_digitada)'
-      'VALUES('
-      'NULL, :datahora_envio, :quantidade_digitada'
-      ');'
+      'SELECT * FROM interaction'
+      'where id = :id;'
     )
     Params = <    
       item
-        Name = 'datahora_envio'
-      end    
-      item
-        Name = 'quantidade_digitada'
+        Name = 'id'
       end>
-    Left = 351
-    Top = 14
+    Left = 438
+    Top = 41
     ParamData = <    
       item
-        Name = 'datahora_envio'
-      end    
-      item
-        Name = 'quantidade_digitada'
+        Name = 'id'
       end>
+    object zqInteractionid: TZIntegerField
+      FieldKind = fkData
+      FieldName = 'id'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object zqInteractionvalue: TZIntegerField
+      FieldKind = fkData
+      FieldName = 'value'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object zqInteractiondatetime_registration: TZDateTimeField
+      FieldKind = fkData
+      FieldName = 'datetime_registration'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+  end
+  object dsInteraction: TDataSource
+    DataSet = zqInteraction
+    Left = 432
+    Top = 104
   end
 end

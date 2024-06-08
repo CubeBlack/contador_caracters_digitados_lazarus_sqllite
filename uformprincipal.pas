@@ -6,28 +6,27 @@ interface
 
 uses
   Classes, SysUtils, DB, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  DBGrids, ZConnection, ZDataset, uConfig;
+  DBGrids, DBCtrls, ZConnection, ZDataset, ZAbstractRODataset, uConfig;
 
 type
 
   { TformPrincipal }
 
   TformPrincipal = class(TForm)
-    btnSalvarLote: TButton;
-    dsPacote: TDataSource;
-    DBGrid1: TDBGrid;
-    Label1: TLabel;
-    Label2: TLabel;
-    lblDigitosAcumuladoLote: TLabel;
-    lblDigitosAcumuladoAtivo: TLabel;
-    mmValores: TMemo;
-    TimerDisplay: TTimer;
+    btnInteractionSave: TButton;
+    DBText1: TDBText;
+    DBText2: TDBText;
+    DBText3: TDBText;
+    dsInteraction: TDataSource;
     TimerSalvarLote: TTimer;
     TimerKey: TTimer;
     ZConnection: TZConnection;
-    zqPacote: TZQuery;
-    zqPacoteSalvar: TZQuery;
-    procedure btnSalvarLoteClick(Sender: TObject);
+    zqInteraction: TZQuery;
+    zqInteractiondatetime_registration: TZDateTimeField;
+    zqInteractionid: TZIntegerField;
+    zqInteractionvalue: TZIntegerField;
+    procedure btnInteractionSaveClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerDisplayTimer(Sender: TObject);
     procedure TimerKeyTimer(Sender: TObject);
@@ -35,11 +34,10 @@ type
   private
 
   public
-    acumulador_digito_ativo:integer;
     acumulador_digito_lote:integer;
     procedure Coloca(valor:string);
     procedure acumular_um_digito();
-    procedure salvar_lote_no_bd();
+    procedure interaction_save();
   end;
 
 var
@@ -141,46 +139,47 @@ begin
   until keyloop = 255;
 end;
 
-procedure TformPrincipal.salvar_lote_no_bd();
+procedure TformPrincipal.interaction_save();
 begin
-  //zqPacoteSalvar.paramByName('datahora_envio').asDateTime := now();
-  //zqPacoteSalvar.ParamByName('quantidade_digitada').AsInteger := acumulador_digito_lote ;
-  zqPacoteSalvar.ExecSQL();
-
-  acumulador_digito_lote := 0;
+  zqInteraction.ApplyUpdates;
+  zqInteraction.refresh;
 end;
 
 procedure TformPrincipal.TimerSalvarLoteTimer(Sender: TObject);
 begin
-  salvar_lote_no_bd();
+  interaction_save();
 end;
 
 procedure TformPrincipal.TimerDisplayTimer(Sender: TObject);
 begin
-  lblDigitosAcumuladoAtivo.caption := intToStr(acumulador_digito_ativo);
-  lblDigitosAcumuladoLote.caption := intToStr(acumulador_digito_lote);
+
 end;
 
-procedure TformPrincipal.btnSalvarLoteClick(Sender: TObject);
+procedure TformPrincipal.btnInteractionSaveClick(Sender: TObject);
 begin
-  salvar_lote_no_bd();
+  interaction_save();
+end;
+
+procedure TformPrincipal.FormCreate(Sender: TObject);
+begin
+
 end;
 
 procedure TformPrincipal.FormShow(Sender: TObject);
 begin
   setting_load();
+  //database_connect();
 end;
 
 procedure TFormPrincipal.Coloca(valor:string);
 begin
- mmValores.lines.add(valor);
+
  acumular_um_digito();
 end;
 
 procedure TFormPrincipal.acumular_um_digito();
 begin
- acumulador_digito_ativo += 1;
- acumulador_digito_lote += 1;
+ zqInteractionvalue.asInteger := zqInteractionvalue.asInteger + 1;
 end;
 
 end.
