@@ -62,7 +62,6 @@ object formPrincipal: TformPrincipal
       'controls_cp=CP_UTF8'
       'RawStringEncoding=DB_CP'
     )
-    Connected = True
     AddLogMsgToExceptionOrWarningMsg = False
     DisableSavepoints = False
     HostName = 'localhost'
