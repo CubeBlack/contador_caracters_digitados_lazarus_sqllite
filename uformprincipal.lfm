@@ -2,58 +2,149 @@ object formPrincipal: TformPrincipal
   Left = 256
   Height = 240
   Top = 145
-  Width = 701
-  Caption = 'formPrincipal'
+  Width = 576
+  Caption = 'Interaction counter'
   ClientHeight = 240
-  ClientWidth = 701
+  ClientWidth = 576
   OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '3.4.0.0'
-  object btnInteractionSave: TButton
-    Left = 320
-    Height = 25
-    Top = 88
-    Width = 115
-    Caption = 'btnInteractionSave'
+  object mmLog: TMemo
+    Left = 10
+    Height = 84
+    Top = 128
+    Width = 556
+    Align = alClient
+    BorderSpacing.Around = 10
+    ReadOnly = True
+    ScrollBars = ssVertical
     TabOrder = 0
-    OnClick = btnInteractionSaveClick
   end
-  object DBText1: TDBText
-    Left = 328
-    Height = 15
-    Top = 8
-    Width = 41
-    DataField = 'id'
-    DataSource = dsInteraction
+  object chConected: TCheckBox
+    Left = 10
+    Height = 19
+    Top = 47
+    Width = 556
+    Align = alTop
+    BorderSpacing.Around = 10
+    Caption = 'Conected'
+    Enabled = False
+    TabOrder = 1
   end
-  object DBText2: TDBText
-    Left = 376
-    Height = 15
-    Top = 7
-    Width = 41
-    DataField = 'datetime_registration'
-    DataSource = dsInteraction
+  object Label1: TLabel
+    Left = 0
+    Height = 37
+    Top = 0
+    Width = 576
+    Align = alTop
+    Alignment = taCenter
+    Caption = 'Interaction counter'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -27
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentFont = False
   end
-  object DBText3: TDBText
-    Left = 508
+  object Panel1: TPanel
+    Left = 10
+    Height = 42
+    Top = 76
+    Width = 556
+    Align = alTop
+    BorderSpacing.Around = 10
+    ClientHeight = 42
+    ClientWidth = 556
+    TabOrder = 2
+    object Label2: TLabel
+      Left = 232
+      Height = 20
+      Top = 11
+      Width = 59
+      Align = alLeft
+      BorderSpacing.Around = 10
+      Caption = 'To send: '
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -16
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      ParentFont = False
+    end
+    object Label3: TLabel
+      Left = 11
+      Height = 20
+      Top = 11
+      Width = 101
+      Align = alLeft
+      BorderSpacing.Around = 10
+      Caption = 'On this sesion:'
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -16
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      ParentFont = False
+    end
+    object lblToSend: TLabel
+      Left = 301
+      Height = 20
+      Top = 11
+      Width = 100
+      Align = alLeft
+      AutoSize = False
+      BorderSpacing.Around = 10
+      Caption = '000'
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -16
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      ParentFont = False
+    end
+    object btnInteractionSave: TButton
+      Left = 411
+      Height = 30
+      Top = 6
+      Width = 115
+      Align = alLeft
+      BorderSpacing.Around = 5
+      Caption = 'Post Interaction'
+      TabOrder = 0
+      OnClick = btnInteractionSaveClick
+    end
+    object lblSended: TLabel
+      Left = 122
+      Height = 20
+      Top = 11
+      Width = 100
+      Align = alLeft
+      AutoSize = False
+      BorderSpacing.Around = 10
+      Caption = '000'
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -16
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      ParentFont = False
+    end
+  end
+  object Label4: TLabel
+    Left = 3
     Height = 15
-    Top = 7
-    Width = 41
-    DataField = 'value'
-    DataSource = dsInteraction
+    Top = 222
+    Width = 570
+    Align = alBottom
+    BorderSpacing.Around = 3
+    Caption = 'Daniel Lima'
   end
   object TimerKey: TTimer
     Interval = 16
     OnTimer = TimerKeyTimer
-    Left = 24
-    Top = 16
+    Left = 104
+    Top = 152
   end
   object tmInteractionSave: TTimer
-    Enabled = False
     Interval = 60000
     OnTimer = tmInteractionSaveTimer
-    Left = 96
-    Top = 24
+    Left = 168
+    Top = 144
   end
   object ZConnection: TZConnection
     ControlsCodePage = cCP_UTF8
@@ -70,56 +161,27 @@ object formPrincipal: TformPrincipal
     User = 'postgres'
     Password = '1'
     Protocol = 'postgresql'
-    Left = 56
-    Top = 88
+    Left = 40
+    Top = 152
   end
-  object zqInteraction: TZQuery
+  object dsInteraction: TDataSource
+    Left = 392
+    Top = 152
+  end
+  object zqInteractionPost: TZQuery
     Connection = ZConnection
     SQL.Strings = (
-      'SELECT * FROM interaction'
-      'where id = :id;'
+      'INSERT INTO interaction (value) VALUES (:value);'
     )
     Params = <    
       item
-        Name = 'id'
+        Name = 'value'
       end>
-    Left = 438
-    Top = 41
+    Left = 280
+    Top = 144
     ParamData = <    
       item
-        Name = 'id'
+        Name = 'value'
       end>
-    object zqInteractionid: TZIntegerField
-      FieldKind = fkData
-      FieldName = 'id'
-      Index = 0
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
-      Required = False
-    end
-    object zqInteractionvalue: TZIntegerField
-      FieldKind = fkData
-      FieldName = 'value'
-      Index = 1
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
-      Required = False
-    end
-    object zqInteractiondatetime_registration: TZDateTimeField
-      FieldKind = fkData
-      FieldName = 'datetime_registration'
-      Index = 2
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
-      Required = False
-    end
-  end
-  object dsInteraction: TDataSource
-    DataSet = zqInteraction
-    Left = 432
-    Top = 104
   end
 end

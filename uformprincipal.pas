@@ -9,22 +9,28 @@ uses
   DBGrids, DBCtrls, ZConnection, ZDataset, ZAbstractRODataset, uConfig;
 
 type
+  TLogType = (ltError, ltMsg);
+
+type
 
   { TformPrincipal }
 
   TformPrincipal = class(TForm)
     btnInteractionSave: TButton;
-    DBText1: TDBText;
-    DBText2: TDBText;
-    DBText3: TDBText;
+    chConected: TCheckBox;
     dsInteraction: TDataSource;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    lblToSend: TLabel;
+    lblSended: TLabel;
+    mmLog: TMemo;
+    Panel1: TPanel;
     tmInteractionSave: TTimer;
     TimerKey: TTimer;
     ZConnection: TZConnection;
-    zqInteraction: TZQuery;
-    zqInteractiondatetime_registration: TZDateTimeField;
-    zqInteractionid: TZIntegerField;
-    zqInteractionvalue: TZIntegerField;
+    zqInteractionPost: TZQuery;
     procedure btnInteractionSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -32,14 +38,15 @@ type
     procedure TimerKeyTimer(Sender: TObject);
     procedure tmInteractionSaveTimer(Sender: TObject);
   private
-
+    interactions_count_sended:integer;
+    interactions_count_tosend:integer;
   public
-    acumulador_digito_lote:integer;
     procedure Coloca(valor:string);
     procedure acumular_um_digito();
     procedure interaction_save();
     procedure database_connect();
-    procedure querys_open();
+    procedure log_add(log_type:TLogType;title:string;msg:string);
+    procedure counts_show();
   end;
 
 var
@@ -142,20 +149,42 @@ begin
 end;
 
 procedure TformPrincipal.interaction_save();
+const
+  LOG_TITLE = 'interaction_save()';
 begin
-  if zqInteractionvalue.asInteger = 0 then
+  if interactions_count_tosend = 0 then
   begin
+    //log_add(TLogType.ltMsg, LOG_TITLE, 'Nothing to be sent');
     exit;
   end;
 
-  zqInteraction.ApplyUpdates;
-  zqInteraction.refresh;
-  zqInteraction.insert;
+  zqInteractionPost.ParamByName('value').AsInteger := interactions_count_tosend;
+
+  try
+     zqInteractionPost.ExecSQL;
+  except
+    on e:Exception do
+    begin
+       log_add(TLogType.ltError, LOG_TITLE, e.Message);
+       exit;
+    end;
+  end;
+  log_add(TLogType.ltMsg, LOG_TITLE, 'Sended: ' + intToStr(interactions_count_tosend));
+  interactions_count_sended :=  interactions_count_sended + interactions_count_tosend;
+  interactions_count_tosend := 0;
+  counts_show();
 end;
 
 procedure TformPrincipal.tmInteractionSaveTimer(Sender: TObject);
 begin
+  if not ZConnection.Connected then
+  begin
+    database_connect();
+    exit;
+  end;
+
   interaction_save();
+  counts_show();
 end;
 
 procedure TformPrincipal.TimerDisplayTimer(Sender: TObject);
@@ -175,20 +204,12 @@ end;
 
 procedure TformPrincipal.FormShow(Sender: TObject);
 begin
-  try
-    setting_load();
-    database_connect();
-    querys_open();
-  except
-    on e:Exception do
-    begin
-       showMessage(e.Message);
-       close();
-    end;
-
+  if ZConnection.Connected then
+  begin
+    raise Exception.Create('Previously connected connection');
   end;
 
-  tmInteractionSave.Enabled:=true;
+  counts_show();
 end;
 
 procedure TFormPrincipal.Coloca(valor:string);
@@ -198,26 +219,47 @@ end;
 
 procedure TFormPrincipal.acumular_um_digito();
 begin
- zqInteractionvalue.asInteger := zqInteractionvalue.asInteger + 1;
+ interactions_count_tosend := interactions_count_tosend + 1;
+ counts_show();
 end;
 
 procedure TFormPrincipal.database_connect();
 begin
- //TUDO - criar validação caso ja esteja conectado ao abrir
- ZConnection.Connected := false;
+
+ setting_load();
 
  ZConnection.HostName := setting_database.host;
  ZConnection.Port := setting_database.port;
  ZConnection.User := setting_database.user;
  ZConnection.Password := setting_database.pasword;
 
- ZConnection.Connect;
+ try
+   ZConnection.Connect;
+ except
+   on E: Exception do
+   begin
+      log_add(ltError, E.ClassName, E.Message);
+      chConected.Checked:=false;
+   end;
+ end;
+
+  if ZConnection.Connected then
+  begin
+    log_add(TLogType.ltMsg, 'Conection openned', '');
+    chConected.Checked:=true;
+  end;
 end;
 
-procedure TFormPrincipal.querys_open();
+procedure TFormPrincipal.log_add(log_type:TLogType;title:string;msg:string);
 begin
- zqInteraction.open;
- zqInteraction.insert;
+  mmlog.lines.add('');
+  mmlog.lines.add(title);
+  mmlog.lines.add(msg);
+end;
+procedure TFormPrincipal.counts_show();
+begin
+  lblToSend.Caption:=IntToStr(interactions_count_tosend);
+  lblSended.Caption:=IntToStr(interactions_count_sended);
 end;
 
 end.
