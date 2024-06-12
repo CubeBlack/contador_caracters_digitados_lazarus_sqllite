@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, DB, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  DBGrids, DBCtrls, ZConnection, ZDataset, ZAbstractRODataset, uConfig;
+  DBGrids, DBCtrls, Menus, ZConnection, ZDataset, ZAbstractRODataset, uConfig;
 
 type
   TLogType = (ltError, ltMsg);
@@ -25,15 +25,24 @@ type
     Label4: TLabel;
     lblToSend: TLabel;
     lblSended: TLabel;
+    miExit: TMenuItem;
+    miHide: TMenuItem;
+    miShow: TMenuItem;
     mmLog: TMemo;
     Panel1: TPanel;
+    PopupMenuTrayIcon: TPopupMenu;
     tmInteractionSave: TTimer;
     TimerKey: TTimer;
+    TrayIcon: TTrayIcon;
     ZConnection: TZConnection;
     zqInteractionPost: TZQuery;
     procedure btnInteractionSaveClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure miExitClick(Sender: TObject);
+    procedure miHideClick(Sender: TObject);
+    procedure miShowClick(Sender: TObject);
     procedure TimerDisplayTimer(Sender: TObject);
     procedure TimerKeyTimer(Sender: TObject);
     procedure tmInteractionSaveTimer(Sender: TObject);
@@ -197,6 +206,13 @@ begin
   interaction_save();
 end;
 
+procedure TformPrincipal.FormClose(Sender: TObject;
+  var CloseAction: TCloseAction);
+begin
+  hide;
+  Abort;
+end;
+
 procedure TformPrincipal.FormCreate(Sender: TObject);
 begin
 
@@ -210,6 +226,21 @@ begin
   end;
 
   counts_show();
+end;
+
+procedure TformPrincipal.miExitClick(Sender: TObject);
+begin
+  Application.Terminate;
+end;
+
+procedure TformPrincipal.miHideClick(Sender: TObject);
+begin
+  formPrincipal.Hide;
+end;
+
+procedure TformPrincipal.miShowClick(Sender: TObject);
+begin
+  formPrincipal.show();
 end;
 
 procedure TFormPrincipal.Coloca(valor:string);
